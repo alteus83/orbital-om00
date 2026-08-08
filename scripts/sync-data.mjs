@@ -72,6 +72,12 @@ async function fetchUpcomingShips() {
     manufacturer: m.manufacturer?.name || null,
     production_status: m.production_status || "Sconosciuto",
     store_url: m.url ? `https://robertsspaceindustries.com${m.url}` : null,
+    scm_speed: m.scm_speed ?? null,
+    cargo: m.cargocapacity ?? null,
+    min_crew: m.min_crew ?? null,
+    max_crew: m.max_crew ?? null,
+    size: m.size || null,
+    focus: m.focus || null,
   }));
 }
 
