@@ -105,7 +105,7 @@ async function main() {
   const changelog = await fetchChangelog();
   await upsert("changelog_entries", changelog, "url");
 
-  console.log("Raccolgo le navi in uscita da FleetYards...");
+  console.log("Raccolgo le navi in uscita dallo Ship Matrix RSI...");
   try {
     const ships = await fetchUpcomingShips();
     await upsert("upcoming_ships", ships, "slug");
