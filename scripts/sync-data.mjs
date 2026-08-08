@@ -52,7 +52,7 @@ async function fetchChangelog() {
 // NAVI IN USCITA — da FleetYards.net
 // ------------------------------------------------------------
 async function fetchUpcomingShips() {
-  const res = await fetch("https://api.fleetyards.net/models?perPage=200");
+  const res = await fetch("https://api.fleetyards.net/v1/models?perPage=200");
   if (!res.ok) throw new Error(`FleetYards: risposta ${res.status}`);
   const models = await res.json();
 
