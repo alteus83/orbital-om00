@@ -473,22 +473,35 @@ function FleetScreen() {
           )}
           {(upcoming || []).map((s) => {
             const status = s.status || s.production_status || "Sconosciuto";
+            const hasSpecs = s.scm_speed || s.cargo || s.min_crew || s.max_crew;
+            const crewLabel =
+              s.min_crew && s.max_crew && s.min_crew !== s.max_crew
+                ? `${s.min_crew}-${s.max_crew}`
+                : s.min_crew || s.max_crew || null;
             return (
               <Card key={s.id}>
                 <div className="flex items-center justify-between">
-                  <div>
+                  <div className="flex-1">
                     <p className="text-[11px]" style={{ color: theme.cyan }}>
                       {(s.manufacturer || "N/D").toUpperCase()} · {status}
                     </p>
                     <p className="font-semibold text-sm mt-0.5">{s.name}</p>
                     {s.note && <p className="text-xs mt-1" style={{ color: theme.textMuted }}>{s.note}</p>}
+                    {hasSpecs && (
+                      <p className="om-mono text-[11px] mt-1.5" style={{ color: theme.textMuted }}>
+                        {s.size && `${s.size} · `}
+                        {s.cargo ? `${s.cargo} SCU · ` : ""}
+                        {crewLabel ? `${crewLabel} crew · ` : ""}
+                        {s.scm_speed ? `${s.scm_speed} m/s` : ""}
+                      </p>
+                    )}
                   </div>
                   {s.store_url ? (
                     <a
                       href={s.store_url}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-[11px] flex-shrink-0"
+                      className="text-[11px] flex-shrink-0 ml-2"
                       style={{ color: theme.cyan }}
                     >
                       Apri ↗
