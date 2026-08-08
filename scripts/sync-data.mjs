@@ -50,7 +50,7 @@ async function fetchChangelog() {
 
 // ------------------------------------------------------------
 // NAVI IN USCITA — dallo Ship Matrix ufficiale di RSI
-// ------------------------------------------------------------
+// -----------------------------------------------------------
 async function fetchUpcomingShips() {
   const res = await fetch("https://robertsspaceindustries.com/ship-matrix/index");
   if (!res.ok) throw new Error(`RSI Ship Matrix: risposta ${res.status}`);
