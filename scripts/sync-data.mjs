@@ -1,7 +1,7 @@
 // ============================================================
 // Orbital OM 00 — Sincronizzazione dati automatica
 // Eseguito periodicamente da GitHub Actions (vedi .github/workflows/sync-data.yml)
-// Fonti: Star Citizen Wiki (changelog) e FleetYards.net (navi in uscita)
+// Fonti: Star Citizen Wiki (changelog) e Ship Matrix ufficiale RSI (navi in uscita)
 // ============================================================
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -49,34 +49,29 @@ async function fetchChangelog() {
 }
 
 // ------------------------------------------------------------
-// NAVI IN USCITA — da FleetYards.net
+// NAVI IN USCITA — dallo Ship Matrix ufficiale di RSI
 // ------------------------------------------------------------
 async function fetchUpcomingShips() {
-  const res = await fetch("https://api.fleetyards.net/v1/models?perPage=200");
-  if (!res.ok) throw new Error(`FleetYards: risposta ${res.status}`);
-  const models = await res.json();
+  const res = await fetch("https://robertsspaceindustries.com/ship-matrix/index");
+  if (!res.ok) throw new Error(`RSI Ship Matrix: risposta ${res.status}`);
+  const json = await res.json();
+  const models = json.data;
 
   if (!Array.isArray(models)) {
-    throw new Error("Risposta FleetYards inattesa (non è un elenco).");
+    throw new Error("Risposta Ship Matrix inattesa (manca il campo 'data').");
   }
 
-  // I nomi esatti dei campi possono variare leggermente: proviamo le
-  // varianti più comuni per essere robusti a piccole differenze dell'API.
-  const getStatus = (m) => m.productionStatus || m.production_status || m.status || "";
-  const getSlug = (m) => m.slug || m.id || m.name;
-  const getStoreUrl = (m) => m.storeUrl || m.store_url || null;
-
   const upcoming = models.filter((m) => {
-    const status = String(getStatus(m)).toLowerCase();
-    return status && !status.includes("flight") && !status.includes("ready");
+    const status = String(m.production_status || "").toLowerCase();
+    return status && status !== "flight-ready";
   });
 
-  return upcoming.slice(0, 40).map((m) => ({
-    slug: String(getSlug(m)),
+  return upcoming.slice(0, 60).map((m) => ({
+    slug: String(m.id),
     name: m.name || "Nave sconosciuta",
-    manufacturer: m.manufacturer?.name || m.manufacturer || null,
-    production_status: getStatus(m) || "Sconosciuto",
-    store_url: getStoreUrl(m),
+    manufacturer: m.manufacturer?.name || null,
+    production_status: m.production_status || "Sconosciuto",
+    store_url: m.url ? `https://robertsspaceindustries.com${m.url}` : null,
   }));
 }
 
